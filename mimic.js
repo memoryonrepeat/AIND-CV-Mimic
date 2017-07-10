@@ -7,6 +7,15 @@
 var divRoot = $("#camera")[0];  // div node where we want to add these elements
 var width = 640, height = 480;  // camera image size
 var faceMode = affdex.FaceDetectorMode.LARGE_FACES;  // face mode parameter
+var mimicTimeout = 10000; // Timeout until next target emoji
+
+// Unicode values for all emojis Affectiva can detect
+var emojis = [ 128528, 9786, 128515, 128524, 128527, 128521, 128535, 128539, 128540, 128542, 128545, 128563, 128561 ];
+
+var targetEmoji = emojis[Math.floor(Math.random() * (emojis.length - 1))]; // Initialize target emoji
+// var targetEmoji = emojis[0];
+var correct = 0;
+var total = 0;
 
 // Initialize an Affectiva CameraDetector object
 var detector = new affdex.CameraDetector(divRoot, width, height, faceMode);
@@ -18,9 +27,6 @@ detector.detectAllEmojis();
 detector.detectAllAppearance();
 
 // --- Utility values and functions ---
-
-// Unicode values for all emojis Affectiva can detect
-var emojis = [ 128528, 9786, 128515, 128524, 128527, 128521, 128535, 128539, 128540, 128542, 128545, 128563, 128561 ];
 
 // Update target emoji being displayed by supplying a unicode value
 function setTargetEmoji(code) {
@@ -75,6 +81,8 @@ function onReset() {
 
   // TODO(optional): You can restart the game as well
   // <your code here>
+  correct = 0;
+  total = 0;
 };
 
 // Add a callback to notify when camera access is allowed
@@ -134,6 +142,7 @@ detector.addEventListener("onImageResultsSuccess", function(faces, image, timest
 
     // TODO: Call your function to run the game (define it first!)
     // <your code here>
+    judge(faces[0].emojis.dominantEmoji, targetEmoji);
   }
 });
 
@@ -164,7 +173,6 @@ function drawFeaturePoints(canvas, img, face) {
     ctx.arc(featurePoint.x, featurePoint.y, 2, 0, 2 * Math.PI);
     ctx.stroke();
     ctx.fill();
-
   }
 }
 
@@ -176,7 +184,7 @@ function drawEmoji(canvas, img, face) {
   ctx.font = '15px serif';
   ctx.strokeStyle = 'yellow';
 
-  ctx.fillText(face.emojis.dominantEmoji, face.featurePoints[0].x, face.featurePoints[0].y);
+  ctx.fillText(face.emojis.dominantEmoji, face.featurePoints[2].x, face.featurePoints[2].y);
 
   // TODO: Set the font and style you want for the emoji
   // <your code here>
@@ -186,6 +194,26 @@ function drawEmoji(canvas, img, face) {
   // TIP: Pick a particular feature point as an anchor so that the emoji sticks to your face
   // <your code here>
 }
+
+function nextTarget(){
+  targetEmoji = emojis[Math.floor(Math.random() * (emojis.length - 1))]; // Re-initialize target emoji
+  // targetEmoji = emojis[0];
+  setTargetEmoji(targetEmoji);
+  total += 1;
+  setScore(correct, total);
+  // setTimeout(nextTarget, mimicTimeout);
+}
+
+function judge(dominantEmoji, targetEmoji){
+  console.log(toUnicode(dominantEmoji), targetEmoji);
+  if (toUnicode(dominantEmoji)===targetEmoji){
+    correct += 1;
+    nextTarget();
+  }
+  setScore(correct, total);
+}
+
+nextTarget();
 
 // TODO: Define any variables and functions to implement the Mimic Me! game mechanics
 
