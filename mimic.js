@@ -197,11 +197,10 @@ function drawEmoji(canvas, img, face) {
 
 function nextTarget(){
   targetEmoji = emojis[Math.floor(Math.random() * (emojis.length - 1))]; // Re-initialize target emoji
-  // targetEmoji = emojis[0];
   setTargetEmoji(targetEmoji);
   total += 1;
   setScore(correct, total);
-  // setTimeout(nextTarget, mimicTimeout);
+  setTimeout(nextTarget, mimicTimeout);
 }
 
 function judge(dominantEmoji, targetEmoji){
