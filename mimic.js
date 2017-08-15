@@ -181,10 +181,10 @@ function drawEmoji(canvas, img, face) {
   // Obtain a 2D context object to draw on the canvas
   var ctx = canvas.getContext('2d');
 
-  ctx.font = '15px serif';
+  ctx.font = '30px serif';
   ctx.strokeStyle = 'yellow';
 
-  ctx.fillText(face.emojis.dominantEmoji, face.featurePoints[2].x, face.featurePoints[2].y);
+  ctx.fillText(face.emojis.dominantEmoji, face.featurePoints[8].x, face.featurePoints[8].y);
 
   // TODO: Set the font and style you want for the emoji
   // <your code here>
